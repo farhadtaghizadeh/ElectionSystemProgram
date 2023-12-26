@@ -1,0 +1,130 @@
+{%- extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+{% block content %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var activateModal = document.getElementById('activateConfirmationModal');
+            var deactivateModal = document.getElementById('deactivateConfirmationModal');
+
+            activateModal.addEventListener('show.bs.modal', function(event) {
+                var button = event.relatedTarget;
+                var ballotId = button.getAttribute('data-bs-ballotid');
+                document.getElementById('activateBallotIdInput').value = ballotId;
+            });
+
+            deactivateModal.addEventListener('show.bs.modal', function(event) {
+                var button = event.relatedTarget;
+                var ballotId = button.getAttribute('data-bs-ballotid');
+                document.getElementById('deactivateBallotIdInput').value = ballotId;
+            });
+        });
+    </script>
+    <form method="POST">
+        {{ activate_form.csrf_token }}
+        <div class="modal fade" id="activateConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="activateConfirmationModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="activateConfirmationModalLabel">Activate Ballot</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="{{ activate_form.ballot_id.name }}" id="activateBallotIdInput" value="">
+                        {{ wtf.form_field(activate_form.start_date) }}
+                        {{ wtf.form_field(activate_form.start_time) }}
+                        {{ wtf.form_field(activate_form.end_date) }}
+                        {{ wtf.form_field(activate_form.end_time) }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        {{ wtf.form_field(activate_form.submit_button, button_map={'submit_button':'primary'}) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <form method="POST">
+        {{ activate_form.csrf_token }}
+        <div class="modal fade" id="deactivateConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deactivateConfirmationModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deactivateConfirmationModalLabel">Deactivate</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="{{ activate_form.ballot_id.name }}" id="deactivateBallotIdInput" value="">
+                        <input type="hidden" name="{{ activate_form.start_date.name }}" value="1970-01-01">
+                        <input type="hidden" name="{{ activate_form.start_time.name }}" value="00:00">
+                        <input type="hidden" name="{{ activate_form.end_date.name }}" value="1970-01-01">
+                        <input type="hidden" name="{{ activate_form.end_time.name }}" value="00:00">
+                        Are you sure you want to deactivate this ballot?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        {{ wtf.form_field(activate_form.submit_button, button_map={'submit_button':'primary'}) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="container">
+        {%- with messages = get_flashed_messages(with_categories=True) %}
+            {%- if messages %}
+                <div class="row">
+                    <div class="col-md-12">
+                        {{utils.flashed_messages(messages)}}
+                    </div>
+                </div>
+            {%- endif %}
+        {%- endwith %}
+        <h1>Ballots </h1>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Ballot ID</th>
+                <th scope="col">Ballot Name</th>
+                <th scope="col">Election</th>
+                <th scope="col">Precinct</th>
+                <th scope="col">Status</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ballot in ballots %}
+                <tr>
+                    <th scope="row">{{ ballot.ballot_id }}</th>
+                    <td>{{ ballot.name }}</td>
+                    <td>{{ ballot.title }}</td>
+                    <td>{{ ballot.voting_location }}</td>
+                    {%- if current_datetime < ballot.end_datetime and current_datetime > ballot.start_datetime %}
+                    <td>Active</td>
+                    {%- else %}
+                    <td>Inactive</td>
+                    {%- endif %}
+                {%- if current_datetime < ballot.end_datetime and current_datetime > ballot.start_datetime %}
+                <td>
+                    <button type="button" class="btn btn-primary btn-sm deactivateBtn" data-bs-toggle="modal" data-bs-target="#deactivateConfirmationModal" data-bs-action="deactivate" data-bs-ballotid="{{ ballot.ballot_id }}" data-bs-ballotname="{{ ballot.name }}">Deactivate</button>
+                </td>
+                {%- else %}
+                <td>
+                    <button type="button" class="btn btn-primary btn-sm activateBtn" data-bs-toggle="modal" data-bs-target="#activateConfirmationModal" data-bs-action="activate" data-bs-ballotid="{{ ballot.ballot_id }}" data-bs-ballotname="{{ ballot.name }}">Activate</button>
+                </td>
+                {%- endif %}
+                <!-- <td>
+                    <a type="button" class="btn btn-primary btn-sm" href="update_precinct/?ballotid={{ ballot.ballot_id }}&ballotname={{ ballot.name }}&user={{ user }}">Update Precinct</a>
+                </td> -->
+                <!-- <td>
+                    <a type="button" class="btn btn-primary btn-sm" href="assign_races/?ballotid={{ ballot.ballot_id }}&ballotname={{ ballot.name }}&user={{ user }}">Assign Races</a>
+                </td> -->
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

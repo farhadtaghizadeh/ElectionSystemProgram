@@ -1,0 +1,38 @@
+{%- extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+{% block content %}
+    <!-- Modal -->
+    <div class="container">
+        {%- with messages = get_flashed_messages(with_categories=True) %}
+            {%- if messages %}
+                <div class="row">
+                    <div class="col-md-12">
+                        {{utils.flashed_messages(messages)}}
+                    </div>
+                </div>
+            {%- endif %}
+        {%- endwith %}
+        <h1>Assign Poll Manager to {{ precinct }} </h1>
+        <table class="table table-striped">
+          <thead>
+          <tr>
+              <th scope="col">Poll Manager ID</th>
+              <th scope="col">Username</th>
+              <th scope="col"></th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for poll_manager in list %}
+              <tr>
+                  <th scope="row">{{ poll_manager.user_id }}</th>
+                  <td>{{ poll_manager.username }}</td>
+              <td>
+                      <a type="button" id="assign_{{ poll_manager.username }}" class="btn btn-primary" href=/process_manager_assignment/?poll_manager={{ poll_manager.user_id }}&precinct={{ precinct }}&user={{ user }}">Assign</a>
+              </td>
+              </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+    </div>
+{% endblock %}

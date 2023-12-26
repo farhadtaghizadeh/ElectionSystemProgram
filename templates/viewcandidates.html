@@ -1,0 +1,48 @@
+{%- extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+{% block content %}
+    <div class="container">
+        {%- with messages = get_flashed_messages(with_categories=True) %}
+            {%- if messages %}
+                <div class="row">
+                    <div class="col-md-12">
+                        {{utils.flashed_messages(messages)}}
+                    </div>
+                </div>
+            {%- endif %}
+        {%- endwith %}
+        <h1>Candidates for {{ current_race.name }} </h1>
+        <h2>Current Candidates</h2>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Candidate ID</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Party</th>
+                <th scope="col">Description</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for candidate in assigned_candidates %}
+                <tr>
+                    <th scope="row">{{ candidate.candidate_id }}</th>
+                    <td>{{ candidate.first_name }}</td>
+                    <td>{{ candidate.last_name }}</td>
+                    <td>{{ candidate.party }}
+                        {% if candidate.incumbent  %}
+                            (I)
+                        {% endif %}
+                    </td>
+                    <td>{{ candidate.description }}</td>
+                    <td>
+                        <a type="button" class="btn btn-primary" href=/vote_for_candidate/?action=vote&candidate_id={{ candidate.candidate_id }}&voter={{ voter }}&race={{ current_race.race_id }}&user={{ user }}&ballot={{ ballot }}">Vote</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

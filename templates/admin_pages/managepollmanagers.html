@@ -1,0 +1,62 @@
+{%- extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+{% block content %}
+    <!-- Modal -->
+    <form method="POST">
+        {{ form.csrf_token }}
+        <div class="modal fade" id="poll-managerModal" tabindex="-1" aria-labelledby="poll-managerModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="poll-managerModalLabel">Poll Manager Information</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ wtf.form_field(form.username) }}
+                        {{ wtf.form_field(form.email_address) }}
+                        {{ wtf.form_field(form.password) }}
+                        {{ wtf.form_field(form.confirm) }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        {{ wtf.form_field(form.submit_button, button_map={'submit_button':'primary'}) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+  <div class="container">
+      {%- with messages = get_flashed_messages(with_categories=True) %}
+          {%- if messages %}
+              <div class="row">
+                  <div class="col-md-12">
+                      {{utils.flashed_messages(messages)}}
+                  </div>
+              </div>
+          {%- endif %}
+      {%- endwith %}
+      <h1>Manage Poll Managers </h1>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#poll-managerModal">
+          Create Poll Manager
+      </button>
+      <table class="table table-striped">
+          <thead>
+          <tr>
+              <th scope="col">Poll Manager ID</th>
+              <th scope="col">Username</th>
+              <th scope="col">Email</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for poll_manager in poll_managers %}
+              <tr>
+                  <th scope="row">{{ poll_manager.user_id }}</th>
+                  <td>{{ poll_manager.username }}</td>
+                  <td>{{ poll_manager.email }}</td>
+              </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+  </div>
+{% endblock %}

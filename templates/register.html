@@ -1,0 +1,127 @@
+{%- extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+
+{% block content %}
+    <form method="POST">
+        {{ form.csrf_token }}
+        <div class="container">
+            {%- with messages = get_flashed_messages(with_categories=True) %}
+                {%- if messages %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{utils.flashed_messages(messages)}}
+                        </div>
+                    </div>
+                {%- endif %}
+            {%- endwith %}
+            <div class="jumbotron">
+                <h1>Voter Registration</h1>
+                <p>Please fill out the following form to register to vote.</p>
+            </div>
+            <div class="form-group">
+                <div class="card-group">
+                    <div class="card">
+                        <h2 class="card-header">Login Information</h2>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    {{ wtf.form_field(form.email_address) }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    {{ wtf.form_field(form.username) }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    {{ wtf.form_field(form.password) }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    {{ wtf.form_field(form.confirm)  }}
+                                </div>
+                           </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                       <h2 class="card-header">Personal Information</h2>
+                       <div class="card-body">
+                           <div class="row">
+                               <div class="col-lg-8">
+                                   {{ wtf.form_field(form.first_name) }}
+                               </div>
+                           </div>
+                           <div class="row">
+                               <div class="col-lg-8">
+                                   {{ wtf.form_field(form.middle_name) }}
+                               </div>
+                           </div>
+                           <div class="row">
+                               <div class="col-lg-8">
+                                   {{ wtf.form_field(form.last_name) }}
+                               </div>
+                           </div>
+                       <div class="row">
+                           <div class="col-lg-8">
+                               {{ wtf.form_field(form.address) }}
+                           </div>
+                           <div class="col-lg-4">
+                               {{ wtf.form_field(form.address2) }}
+                           </div>
+                       </div>
+                       <div class="row">
+                           <div class="col-lg-4">
+                               {{ wtf.form_field(form.city) }}
+                           </div>
+                           <div class="col-lg-4">
+                               {{ wtf.form_field(form.state) }}
+                           </div>
+                           <div class="col-lg-4">
+                               {{ wtf.form_field(form.zip_code) }}
+                           </div>
+                       </div>
+                       <div class="row">
+                           <div class="col">
+                               {{ wtf.form_field(form.phone_number) }}
+                           </div>
+                           <div class="col">
+                               {{ wtf.form_field(form.date_of_birth) }}
+                           </div>
+                       </div>
+                       </div>
+                   </div>
+                   <div class="card">
+                       <h2 class="card-header">Government ID</h2>
+                       <div class="card-body">
+                           <p class="card-text">Please provide two forms of government-issued identification.</p>
+                           <div class="row">
+                               <div class="col-lg-6">
+                                   {{ wtf.form_field(form.gov_id_1_type) }}
+                               </div>
+                               <div class="col-lg-6">
+                                   {{ wtf.form_field(form.gov_id_1) }}
+                               </div>
+                           </div>
+                           <div class="row">
+                               <div class="col-lg-6">
+                                   {{ wtf.form_field(form.gov_id_2_type) }}
+                               </div>
+                               <div class="col-lg-6">
+                                   {{ wtf.form_field(form.gov_id_2) }}
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+                </div>
+                <div class="row">
+                    <div class="d-grid p-2 ">
+                        {{ wtf.form_field(form.submit_button, button_map={'submit_button':'primary'}) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{%- endblock %}

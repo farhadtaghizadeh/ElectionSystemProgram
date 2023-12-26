@@ -1,0 +1,90 @@
+{%- extends "base.html" %}
+{% import "bootstrap/utils.html" as utils %}
+{% block content %}
+  <div class="container">
+      {%- with messages = get_flashed_messages(with_categories=True) %}
+          {%- if messages %}
+    <div class="row">
+      <div class="col-md-12">
+        {{utils.flashed_messages(messages)}}
+      </div>
+    </div>
+  {%- endif %}
+  {%- endwith %}
+    <h1>hi {{ voter.first_name }} , your voting precinct is {{ precinct.voting_location }}</h1>
+    <ul class ="list-group">
+        <li class = list-group-item> <b>Username: </b> {{ user.username }} </li>
+        <li class = list-group-item> <b>Email Address: </b> {{ user.email }} </li>
+        <li class = list-group-item> <b>First Name: </b> {{ voter.first_name}} </li>
+        <li class = list-group-item> <b>Middle Name: </b> {{ voter.middle_name }} </li>
+        <li class = list-group-item> <b>Last Name: </b> {{ voter.last_name }} </li>
+        <li class = list-group-item> <b>Phone Number: </b> {{ voter.phone }} </li>
+        <li class = list-group-item> <b>Street Address: </b> {{ voter.address }} </li>
+        {% if voter.address2 != None %}
+        <li class = list-group-item> <b>Apt / Unit#: </b> {{ voter.address2 }} </li>
+        {% endif %}
+        <li class = list-group-item> <b>Zip Code: </b> {{ voter.zip_code }} </li>
+    </ul>
+  <div class="row">
+      <div class="col-lg-6">
+      <div class="d-grid p-2 ">
+  <a type="button" class="btn btn-primary" href="{{"change_password/?username=" + user.username }}">Change Password</a>
+          </div>
+      </div>
+      <div class="col-lg-6">
+          <div class="d-grid p-2">
+  <a type="button" class="btn btn-primary" href="{{"change_address/?username=" + user.username }}">Change Address</a>
+      </div>
+      </div>
+  </div>
+  {% if voter.pending == True %}
+
+      <div class="alert alert-warning d-flex align-items-center" role="alert">
+      Your voting status is still pending. Voting features are disabled until your request has been approved.
+      </div>
+      </div>
+      {% else %}
+      {% if voter.approved == True %}
+          <div class="card">
+          <div class="card-header">
+              <h2>Elections List</h2>
+          </div>
+          <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Election ID</th>
+                <th scope="col">Title</th>
+                <th scope="col">Start Date & Time</th>
+                <th scope="col">End Date & Time</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for election in elections %}
+                <tr>
+                    <th scope="row">{{ election.election_id }}</th>
+                    <td>{{ election.title }}</td>
+                    <td>{{ election.start_datetime }}</td>
+                    <td>{{ election.end_datetime }}</td>
+                <td>
+                    <a type="button" class="btn btn-primary btn-sm" href="vote_races/?user={{ user.user_id }}&ballot={{ election.ballot_id }}&voter={{ voter.voter_id }}">View Races</a>
+                </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+          </div>
+          {% else %}
+
+
+    <div class="alert alert-primary d-flex align-items-center" role="alert">
+      <div>
+        Your voting request has been denied. For more information, please contact support.
+      </div>
+    </div>
+
+  </div>
+  {% endif %}
+  {% endif %}
+  </div>
+{% endblock %}

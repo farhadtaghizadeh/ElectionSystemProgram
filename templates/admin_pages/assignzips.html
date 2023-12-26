@@ -1,0 +1,63 @@
+{%- extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+{% block content %}
+    <div class="container">
+        {%- with messages = get_flashed_messages(with_categories=True) %}
+            {%- if messages %}
+                <div class="row">
+                    <div class="col-md-12">
+                        {{utils.flashed_messages(messages)}}
+                    </div>
+                </div>
+            {%- endif %}
+        {%- endwith %}
+        <h1>Manage zips for Precinct: {{ current_precinct.voting_location }} </h1>
+        <h2>Current Zips</h2>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Zip</th>
+                <th scope="col">Zip+4 Start</th>
+                <th scope="col">Zip+4 End</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for zip in assigned_zips %}
+                <tr>
+                    <th scope="row">{{ zip.zip }}</th>
+                    <td>{{ zip.zip_plus_4_start }}</td>
+                    <td>{{ zip.zip_plus_4_end }}</td>
+                    <td>
+                        <a type="button" class="btn btn-primary" href=/process_zip_assignment/?action=remove&zip_id={{ zip.zip_id }}&precinct={{ current_precinct.precinct_id }}&user={{ user }}">Remove</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <h2>Unassigned Zips</h2>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Zip</th>
+                <th scope="col">Zip+4 Start</th>
+                <th scope="col">Zip+4 End</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for zip in unassigned_zips %}
+                <tr>
+                    <th scope="row">{{ zip.zip }}</th>
+                    <td>{{ zip.zip_plus_4_start }}</td>
+                    <td>{{ zip.zip_plus_4_end }}</td>
+                    <td>
+                        <a type="button" class="btn btn-primary" href=/process_zip_assignment/?action=add&zip_id={{ zip.zip_id }}&precinct={{ current_precinct.precinct_id }}&user={{ user }}">Add</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

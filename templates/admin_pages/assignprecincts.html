@@ -1,0 +1,63 @@
+{%- extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+{% block content %}
+    <div class="container">
+        {%- with messages = get_flashed_messages(with_categories=True) %}
+            {%- if messages %}
+                <div class="row">
+                    <div class="col-md-12">
+                        {{utils.flashed_messages(messages)}}
+                    </div>
+                </div>
+            {%- endif %}
+        {%- endwith %}
+        <h1>Manage precincts for {{ current_ballot.name }} </h1>
+        <h2>Current Precincts</h2>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Precinct ID</th>
+                <th scope="col">Voting Location</th>
+                <th scope="col">State Contact Office Address</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for precinct in assigned_precincts %}
+                <tr>
+                    <th scope="row">{{ precinct.precinct_id }}</th>
+                    <td>{{ precinct.voting_location }}</td>
+                    <td>{{ precinct.state_election_office_contact_address }}</td>
+                    <td>
+                        <a type="button" class="btn btn-primary" href=/process_precinct_assignment/?action=remove&precinct_id={{ precinct.precinct_id }}&ballot={{ current_ballot.ballot_id }}&user={{ user }}">Remove</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <h2>Unassigned Precincts</h2>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Precinct ID</th>
+                <th scope="col">Voting Location</th>
+                <th scope="col">State Contact Office Address</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for precinct in unassigned_precincts %}
+                <tr>
+                    <th scope="row">{{ precinct.precinct_id }}</th>
+                    <td>{{ precinct.voting_location }}</td>
+                    <td>{{ precinct.state_election_office_contact_address }}</td>
+                    <td>
+                        <a type="button" class="btn btn-primary" href=/process_precinct_assignment/?action=add&precinct_id={{ precinct.precinct_id }}&ballot={{ current_ballot.ballot_id }}&user={{ user }}">Add</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

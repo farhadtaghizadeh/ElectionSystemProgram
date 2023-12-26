@@ -1,0 +1,38 @@
+{%- extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+{% block content %}
+    <!-- Modal -->
+    <div class="container">
+        {%- with messages = get_flashed_messages(with_categories=True) %}
+            {%- if messages %}
+                <div class="row">
+                    <div class="col-md-12">
+                        {{utils.flashed_messages(messages)}}
+                    </div>
+                </div>
+            {%- endif %}
+        {%- endwith %}
+        <h1>Update Election for {{ ballotname }} </h1>
+        <table class="table table-striped">
+          <thead>
+          <tr>
+              <th scope="col">Precinct ID</th>
+              <th scope="col">Precinct Voting Location</th>
+              <th scope="col"></th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for p in precincts %}
+              <tr>
+                  <th scope="row">{{ p.precinct_id }}</th>
+                  <td>{{ p.voting_location }}</td>
+              <td>
+                      <a type="button" class="btn btn-primary" href="/process_ballot_update_precinct/?precinct={{ p.precinct_id }}&ballot={{ ballotid }}&user={{ user }}">Assign</a>
+              </td>
+              </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+    </div>
+{% endblock %}

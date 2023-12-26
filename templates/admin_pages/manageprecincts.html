@@ -1,0 +1,95 @@
+{%- extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+{% block content %}
+    <!-- Modal -->
+    <form method="POST">
+        {{ form.csrf_token }}
+        <div class="modal fade" id="precinctModal" tabindex="-1" aria-labelledby="precinctModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="precinctModalLabel">Precinct Information</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ wtf.form_field(form.voting_location) }}
+                        {{ wtf.form_field(form.election_office) }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        {{ wtf.form_field(form.submit_button, button_map={'submit_button':'primary'}) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <form method="POST">
+        {{ form2.csrf_token }}
+        <div class="modal fade" id="assignModal" tabindex="-1" aria-labelledby="assignModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="assignModalLabel">Assign Polling Manager</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ wtf.form_field(form2.polling_manager) }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        {{ wtf.form_field(form2.submit_button, button_map={'submit_button':'primary'}) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="container">
+        {%- with messages = get_flashed_messages(with_categories=True) %}
+            {%- if messages %}
+                <div class="row">
+                    <div class="col-md-12">
+                        {{utils.flashed_messages(messages)}}
+                    </div>
+                </div>
+            {%- endif %}
+        {%- endwith %}
+        <h1>Manage Precincts </h1>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#precinctModal">
+            Create Precinct
+        </button>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Precinct ID</th>
+                <th scope="col">Voting Location</th>
+                <th scope="col">Office Contact Address</th>
+                <th scope="col">Polling Manager</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for precinct in precincts %}
+                <tr>
+                    <th scope="row">{{ precinct.precinct_id }}</th>
+                    <td>{{ precinct.voting_location }}</td>
+                    <td>{{ precinct.state_election_office_contact_address }}</td>
+                    <td id="polling_manager_for_{{ precinct.voting_location.replace(" ", "_").lower()  }}">
+                        {% if precinct.username != None %}
+                            {{ precinct.username }}
+                        {% else %}
+                            Unassigned
+                        {% endif %}
+                    </td>
+                <td>
+                    <a type="button" class="btn btn-primary btn-sm" id="assign_manager_button_for_{{ precinct.voting_location.replace(" ", "_").lower() }}" href="assign_manager/?precinct={{ precinct.precinct_id }}&user={{ user }}">Update Polling Manager</a>
+                </td>
+                <td>
+                    <a type="button" class="btn btn-primary btn-sm" id="assign_zips_button_for_{{ precinct.voting_location.replace(" ", "_").lower() }}" href="assign_zips/?precinct={{ precinct.precinct_id }}&user={{ user }}">Add / Remove Zips</a>
+                </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

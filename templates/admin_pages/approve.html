@@ -1,0 +1,53 @@
+{%- extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+
+{% block content %}
+    <div class="container">
+        {%- with messages = get_flashed_messages(with_categories=True) %}
+            {%- if messages %}
+                <div class="row">
+                    <div class="col-md-12">
+                        {{utils.flashed_messages(messages)}}
+                    </div>
+                </div>
+            {%- endif %}
+        {%- endwith %}
+        <div class="jumbotron">
+            <h1>User Approval Page</h1>
+        </div>
+    <div class="accordion" id="accordionExample">
+        {% for voter in voters %}
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ voter.user_id }}" aria-expanded="false" aria-controls="collapseOne">
+                            {{ voter.first_name }} {{ voter.middle_name }} {{ voter.last_name }}
+                        </button>
+                    </h2>
+                    <div id="collapse{{ voter.user_id }}" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex">
+                                    <div class="rols-col-3">
+                                        <div class="fw-bold">{{ voter.document1_type }}</div>
+                                        {{ voter.document1_info }}
+                                    </div>
+                                </li>
+                                <li class="list-group-item d-flex">
+                                    <div class="rols-col-3">
+                                        <div class="fw-bold">{{ voter.document2_type }}</div>
+                                        {{ voter.document2_info }}
+                                    </div>
+                                </li>
+                            </ul>
+                            <a type="submit" class="btn btn-outline-success" href="/process-approval/?voter_id={{ voter.voter_id }}&action=approve&user={{ user }}">Approve</a>
+                            <a type="submit" class="btn btn-outline-danger" href="/process-approval/?voter_id={{ voter.voter_id }}&action=deny&user={{ user }}">Deny</a>
+                        </div>
+                    </div>
+                </div>
+
+        {% endfor %}
+    </div>
+    </div>
+{%- endblock %}

@@ -1,0 +1,42 @@
+{%- extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+{% block content %}
+    <!-- Modal -->
+    <div class="container">
+        {%- with messages = get_flashed_messages(with_categories=True) %}
+            {%- if messages %}
+                <div class="row">
+                    <div class="col-md-12">
+                        {{utils.flashed_messages(messages)}}
+                    </div>
+                </div>
+            {%- endif %}
+        {%- endwith %}
+        <h1>Update Election for {{ ballotname }} </h1>
+        <table class="table table-striped">
+          <thead>
+          <tr>
+              <th scope="col">Election ID</th>
+              <th scope="col">Election Title</th>
+              <th scope="col">Start Date</th>
+              <th scope="col">End Date</th>
+              <th scope="col"></th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for e in elections %}
+              <tr>
+                  <th scope="row">{{ e.election_id }}</th>
+                  <td>{{ e.title }}</td>
+                  <td>{{ e.start_datetime }}</td>
+                  <td>{{ e.end_datetime }}</td>
+              <td>
+                      <a type="button" class="btn btn-primary" href="/process_ballot_update_election/?election={{ e.election_id }}&ballot={{ ballotid }}&user={{ user }}">Assign</a>
+              </td>
+              </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+    </div>
+{% endblock %}

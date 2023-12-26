@@ -1,0 +1,73 @@
+{%- extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+{% block content %}
+    <form method="POST">
+        {{ form.csrf_token }}
+        <div class="modal fade" id="ballotModal" tabindex="-1" aria-labelledby="ballotModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="ballotModalLabel">Ballot Information</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ wtf.form_field(form.name) }}
+                        {{ wtf.form_field(form.elections) }}
+                        {{ wtf.form_field(form.precincts) }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        {{ wtf.form_field(form.submit_button, button_map={'submit_button':'primary'}) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="container">
+        {%- with messages = get_flashed_messages(with_categories=True) %}
+            {%- if messages %}
+                <div class="row">
+                    <div class="col-md-12">
+                        {{utils.flashed_messages(messages)}}
+                    </div>
+                </div>
+            {%- endif %}
+        {%- endwith %}
+        <h1>Manage Ballots </h1>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ballotModal">
+            Create Ballot
+        </button>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Ballot ID</th>
+                <th scope="col">Ballot Name</th>
+                <th scope="col">Election</th>
+                <th scope="col">Precinct</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ballot in ballots %}
+                <tr>
+                    <th scope="row">{{ ballot.ballot_id }}</th>
+                    <td>{{ ballot.name }}</td>
+                    <td>{{ ballot.title }}</td>
+                    <td>{{ ballot.voting_location }}</td>
+                <td>
+                    <a type="button" class="btn btn-primary btn-sm" href="update_election/?ballotid={{ ballot.ballot_id }}&ballotname={{ ballot.name }}&user={{ user }}">Update Election</a>
+                </td>
+                <td>
+                    <a type="button" class="btn btn-primary btn-sm" href="update_precinct/?ballotid={{ ballot.ballot_id }}&ballotname={{ ballot.name }}&user={{ user }}">Update Precinct</a>
+                </td>
+                                <td>
+                    <a type="button" class="btn btn-primary btn-sm" href="assign_races/?ballot={{ ballot.ballot_id }}&user={{ user }}">Update Races</a>
+                </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{%- extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+{% block content %}
+    <div class="container">
+        {%- with messages = get_flashed_messages(with_categories=True) %}
+            {%- if messages %}
+                <div class="row">
+                    <div class="col-md-12">
+                        {{utils.flashed_messages(messages)}}
+                    </div>
+                </div>
+            {%- endif %}
+        {%- endwith %}
+        <h1>Current Races </h1>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Race ID</th>
+                <th scope="col">Race Name</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for race in races %}
+                {% if race.race_id not in voted_races %}
+                    <tr>
+                        <th scope="row">{{ race.race_id }}</th>
+                        <td>{{ race.name }}</td>
+                    <td>
+                        <a type="button" class="btn btn-primary btn-sm" href="view_candidates/?ballot={{ ballot }}&race={{ race.race_id }}&voter={{ voter }}&user={{ user }}">View Candidates</a>
+                    </td>
+
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{%- extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "bootstrap/utils.html" as utils %}
+
+{% block content %}
+    <form method="POST">
+        {{ form.csrf_token }}
+        <div class="modal fade" id="voterModal" tabindex="-1" aria-labelledby="voterModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="voterModalLabel">Search Voters</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ wtf.form_field(form.first_name) }}
+                        {{ wtf.form_field(form.middle_name) }}
+                        {{ wtf.form_field(form.last_name) }}
+                        {{ wtf.form_field(form.zip_code) }}
+                        {{ wtf.form_field(form.polling_station) }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        {{ wtf.form_field(form.submit_button, button_map={'submit_button':'primary'}) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="container">
+        <div class="jumbotron">
+            <h1>User Search </h1>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#voterModal">
+                Search Users
+            </button>
+        </div>
+    </div>
+{%- endblock %}
